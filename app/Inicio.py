@@ -6,7 +6,7 @@ luego se contrastan con la P(mora) de los modelos supervisados.
 import plotly.express as px
 import streamlit as st
 
-import utils as u
+from app import utils as u
 
 st.set_page_config(page_title="Behavioral Scoring | Inicio", page_icon="📊", layout="wide")
 datos = u.datos_o_detener()

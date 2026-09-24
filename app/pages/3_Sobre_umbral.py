@@ -6,7 +6,7 @@ Pestaña 2: ya en mora (>30 dias) — gestion de cobranza/recuperacion.
 import plotly.express as px
 import streamlit as st
 
-import utils as u
+from app import utils as u
 
 st.set_page_config(page_title="Behavioral Scoring | Sobre umbral", page_icon="🚨", layout="wide")
 datos = u.datos_o_detener()

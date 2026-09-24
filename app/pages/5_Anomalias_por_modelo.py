@@ -6,7 +6,7 @@ Complementa (no reemplaza) el consenso de la pagina de Inicio.
 import plotly.express as px
 import streamlit as st
 
-import utils as u
+from app import utils as u
 
 st.set_page_config(page_title="Behavioral Scoring | Anomalias por modelo", page_icon="🧭", layout="wide")
 datos = u.datos_o_detener()
