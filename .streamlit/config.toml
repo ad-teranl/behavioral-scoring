@@ -12,3 +12,6 @@ runOnSave = false
 
 [browser]
 gatherUsageStats = false
+
+[server]
+pythonVersion = "3.11"
