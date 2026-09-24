@@ -12,7 +12,7 @@ import os
 import pandas as pd
 import streamlit as st
 
-from app import utils as u
+import utils as u
 
 st.set_page_config(page_title="Behavioral Scoring | Cargar corte", page_icon="📥", layout="wide")
 datos = u.datos_o_detener()

@@ -6,7 +6,7 @@ import numpy as np
 import plotly.graph_objects as go
 import streamlit as st
 
-from app import utils as u
+import utils as u
 
 st.set_page_config(page_title="Behavioral Scoring | Consulta", page_icon="🔎", layout="wide")
 datos = u.datos_o_detener()
