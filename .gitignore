@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.Python
+
+# Hydra outputs
+outputs/
+.hydra/
+
+# Modelos pkl (pesados, se regeneran con train_pipeline.py)
+# EXCEPCION: artefactos_scoring.pkl SI va al repo (lo necesita el tablero)
+models/*.pkl
+!models/artefactos_scoring.pkl
+
+# CSV original (datos sensibles / pesado)
+data/raw/BASE_EJERCICIO_SCORING_31_variables.csv
+data/raw/cortes_nuevos/
+
+# Plots generados (pesados, se regeneran)
+reports/*.png
+reports/anomalos_con_probabilidad.csv
+reports/metricas_supervisados.csv
+reports/resumen_nosupervisados.csv
+reports/cm_*.png
+reports/roc_*.png
+reports/shap_*.png
+reports/shap_waterfall_*.png
+
+# Los CSV de scoring SI van al repo (el tablero los necesita)
+# reports/scoring/ -> se sube completo
+
+# Entornos virtuales
+.env
+venv/
+env/
+
+# VSCode
+.vscode/
+
+# Windows
+Thumbs.db
+desktop.ini

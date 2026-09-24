@@ -1,0 +1,178 @@
+# ============================================================
+# CONFIGURACION CENTRAL — Behavioral Scoring MLOps
+# 2026_behavioral_scoring_prueba
+# ============================================================
+# Control independiente por modelo:
+#   false = carga pkl existente sin reentrenar
+#   true  = corre GridSearchCV desde cero y guarda nuevo pkl
+# ============================================================
+
+reentrenar_xgboost:  false   # XGBoost ya tiene su pkl optimo
+reentrenar_lightgbm: false   # true solo si cambias su grilla
+
+# ------------------------------------------------------------
+# DATOS
+# ------------------------------------------------------------
+data:
+  path: "data/raw/BASE_EJERCICIO_SCORING_31_variables.csv"
+  sep: ";"
+
+# ------------------------------------------------------------
+# TARGET
+# ------------------------------------------------------------
+target:
+  umbral_mora: 30
+
+# ------------------------------------------------------------
+# PARTICION
+# ------------------------------------------------------------
+split:
+  random_state: 42
+  n_splits_train: 3
+  n_splits_val_test: 2
+
+# ------------------------------------------------------------
+# SMOTE
+# ------------------------------------------------------------
+smote:
+  random_state: 42
+
+# ------------------------------------------------------------
+# VARIABLES SUPERVISADAS — 11 variables exogenas a la mora
+# ------------------------------------------------------------
+features_supervisado:
+  - MONTOCREDITO_log_est
+  - MONTOCUOTA_log_est
+  - SALDOCAPITAL_POR_VENCER_log_est
+  - NUMERORENEGOCIACION_log_est
+  - PLAZO_est
+  - TASAINTERES_est
+  - DIAS_MADURACION_est
+  - DIAS_RESTANTES_est
+  - PRODUCTO_COD_PROD_2_e
+  - TIPOTASACOD_V_e
+  - PERIOD_PAGO_OTROS_e
+
+# ------------------------------------------------------------
+# VARIABLES NO SUPERVISADAS — 18 variables
+# ------------------------------------------------------------
+features_nosupervisado:
+  - CALIFICACIONCOD_e
+  - DIASMORA_log
+  - MONTOCREDITO_log_norm
+  - MORAMAXIMA_log
+  - MORAPROMEDIO_log
+  - NUMEROVECESMORA_180_log_norm
+  - NUMEROVECESMORA_30_log
+  - NUMEROVECESMORA_360_log_norm
+  - NUMEROVECESMORA_60_log_norm
+  - NUMEROVECESMORA_90_log_norm
+  - NUMEROVECESMORA_MAS360_log
+  - PERIOD_PAGO_OTROS_e
+  - SALDOCAPITAL_JUDICIAL_log_norm
+  - SALDOCAPITAL_ND_log_norm
+  - SALDOCAPITAL_POR_VENCER_log_norm
+  - SALDOCAPITAL_VENCIDO_log
+  - TASAINTERES_norm
+  - TIPOTASACOD_V_e
+
+# ------------------------------------------------------------
+# XGBOOST — sin cambios, se carga pkl existente
+# ------------------------------------------------------------
+xgboost:
+  cv_folds: 5
+  scoring: f1
+  n_estimators_grid: [200, 400, 600]
+  max_depth_grid: [3, 5, 7]
+  learning_rate_grid: [0.01, 0.05, 0.1]
+  subsample_grid: [0.7, 0.8, 1.0]
+  colsample_bytree_grid: [0.7, 0.8, 1.0]
+  min_child_weight_grid: [1, 5]
+  gamma_grid: [0, 0.1]
+  n_estimators_final: 1000
+  early_stopping_rounds: 50
+  eval_metric: auc
+  random_state: 42
+
+# ------------------------------------------------------------
+# LIGHTGBM — grilla con la que se obtuvo la mejor calibracion (Brier 0.0127)
+# Opcionales soportados: num_leaves_grid, reg_lambda_grid
+# ------------------------------------------------------------
+lightgbm:
+  cv_folds: 5
+  scoring: f1
+  n_estimators_grid: [200, 400, 600]
+  max_depth_grid: [3, 5, 7]
+  learning_rate_grid: [0.01, 0.05, 0.1]
+  subsample_grid: [0.7, 0.8, 1.0]
+  colsample_bytree_grid: [0.7, 0.8, 1.0]
+  min_child_samples_grid: [20, 50]
+  reg_alpha_grid: [0, 0.1]
+  n_estimators_final: 1000
+  early_stopping_rounds: 50
+  random_state: 42
+
+# ------------------------------------------------------------
+# K-MEANS
+# ------------------------------------------------------------
+kmeans:
+  n_clusters: 3
+  random_state: 42
+  init: k-means++
+  n_init: 10
+  max_iter: 300
+
+# ------------------------------------------------------------
+# DBSCAN
+# ------------------------------------------------------------
+dbscan:
+  eps: 0.5
+  min_samples: 5
+  metric: euclidean
+
+# ------------------------------------------------------------
+# ISOLATION FOREST
+# ------------------------------------------------------------
+isolation_forest:
+  n_estimators: 100
+  contamination: 0.1
+  random_state: 42
+  max_samples: auto
+
+# ------------------------------------------------------------
+# AUTOENCODER
+# ------------------------------------------------------------
+autoencoder:
+  hidden_dim: 10
+  epochs: 50
+  batch_size: 256
+  learning_rate: 0.001
+  random_seed: 42
+
+# ------------------------------------------------------------
+# MIUFS
+# ------------------------------------------------------------
+miufs:
+  top_n: 20
+  peso_kurtosis: 0.4
+  peso_asimetria: 0.3
+  peso_entropia: 0.2
+  peso_varianza: 0.1
+
+# ------------------------------------------------------------
+# DASHBOARD Y SCORING DE CARTERA
+# ------------------------------------------------------------
+dashboard:
+  modelo_principal: xgboost        # xgboost | lightgbm | ensemble
+  umbrales: [0.50, 0.60, 0.70, 0.80, 0.90]
+  umbral_defecto: 0.50
+  top_n_anomalos: 20
+  excluir_en_mora: true            # anomalias: ocultar operaciones ya en mora
+  ventana_pendiente: 6             # ultimos N cortes para calcular la pendiente
+
+# ------------------------------------------------------------
+# RUTAS DE SALIDA
+# ------------------------------------------------------------
+paths:
+  models: "models/"
+  reports: "reports/"
